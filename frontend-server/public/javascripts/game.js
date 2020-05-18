@@ -1,6 +1,7 @@
 // TODO: cleanUp
 
 const ships = ["A", "B", "C", "D", "E"];
+const aircraft = ["X", "Y"];
 const FieldLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
 let myFields,
@@ -10,10 +11,10 @@ let myFields,
     enemyShipsLeft = 5;
 /**
  * Translates Battleship coordinates to sea index
- * @param {string} coords Letter number coordinate <A-J><1-10>
+ * @param {string} coords Letter number coordinate <A-J><1-14>
  */
 function toIndex(coords) {
-    return FieldLetters.indexOf(coords[0]) * 10 + Number(coords.slice(1)) - 1;
+    return FieldLetters.indexOf(coords[0]) * 14 + Number(coords.slice(1)) - 1;
 }
 
 function handleMessage(msg, events) {

@@ -8,8 +8,12 @@ const Ships = {
     D: 3,
     E: 2
 };
+const Aircraft = {
+    X: 1,
+    Y: 1
+};
 const FieldLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-let Sea = new Array(100).fill(0);
+let Sea = new Array(140).fill(0);
 
 let currentShip, currentPill;
 let pills, fields;
@@ -55,20 +59,20 @@ function range(min, max, step = 1) {
 
 /**
  * Translates Battleship coordinates to sea index
- * @param {string} coords Letter number coordinate <A-J><1-10>
+ * @param {string} coords Letter number coordinate <A-J><1-14>
  * @return {number} Sea index
  */
 function toIndex(coords) {
-    return FieldLetters.indexOf(coords[0]) * 10 + Number(coords.slice(1)) - 1;
+    return FieldLetters.indexOf(coords[0]) * 14 + Number(coords.slice(1)) - 1;
 }
 
 /**
  * Transform an index to coordinates
- * @param {number} index Index in the sea (0-99)
+ * @param {number} index Index in the sea (0-139)
  * @return {array} A coordinate in the form [row, column]
  */
 function indexToCoords(index) {
-    return [Math.floor(index / 10), index % 10];
+    return [Math.floor(index / 14), index % 14];
 }
 
 /**
@@ -100,26 +104,26 @@ function spaceAround(sea, shipStart, shipEnd, space) {
     if (coordsStart[0] === coordsEnd[0]) {
         // left of the ship
         row =
-            (Math.floor((shipStart - space) / 10) === coordsStart[0] &&
+            (Math.floor((shipStart - space) / 14) === coordsStart[0] &&
                 range(shipStart - space, shipStart - 1).every(empty)) ||
             // right of the ship
-            (Math.floor((shipEnd + space) / 10) === coordsEnd[0] &&
+            (Math.floor((shipEnd + space) / 14) === coordsEnd[0] &&
                 range(
                     shipEnd + 1,
-                    Math.min(shipEnd + space, coordsEnd[0] * 10 + 9)
+                    Math.min(shipEnd + space, coordsEnd[0] * 14 + 13)
                 ).every(empty));
     }
     // Ship on one column
     if (coordsStart[1] === coordsEnd[1]) {
         // Above the ship
         col =
-            (shipStart - space * 10 > -1 &&
-                range(shipStart - space * 10, shipStart - 10, 10).every(
+            (shipStart - space * 14 > -1 &&
+                range(shipStart - space * 14, shipStart - 14, 14).every(
                     empty
                 )) ||
             // Beneath the ship
-            (shipEnd + space * 10 < 100 &&
-                range(shipEnd + 10, shipEnd + space * 10, 10).every(empty));
+            (shipEnd + space * 14 < 140 &&
+                range(shipEnd + 14, shipEnd + space * 14, 14).every(empty));
     }
 
     return { row, col };
@@ -133,7 +137,11 @@ function spaceAround(sea, shipStart, shipEnd, space) {
  */
 function findOccurrences(ship, field) {
     let result = [];
-    field.forEach((el, i) => (el === ship ? result.push(i) : ""));
+    if (ship === "A") {
+        field.forEach((el, i) => (((el === ship) || (el === "X") || (el == "Y")) ? result.push(i) : ""));
+    } else {
+        field.forEach((el, i) => (el === ship ? result.push(i) : ""));
+    }
     return result;
 }
 
@@ -160,6 +168,24 @@ function deleteShip(ship, pill) {
 
     currentShip = undefined;
     currentPill = undefined;
+    if (ship == "A") {
+        fields
+            .filter(field => field.dataset.plane === "X")
+            .forEach(field => {
+                field.removeAttribute("data-plane");
+                field.className = "sea__field";
+            });
+        Sea = Sea.map(field => (field === "X" ? "A" : field));
+
+        fields
+            .filter(field => field.dataset.plane === "Y")
+            .forEach(field => {
+                field.removeAttribute("data-plane");
+                field.className = "sea__field";
+            });
+        Sea = Sea.map(field => (field === "Y" ? "A" : field));
+    }
+    
     // Field
     fields
         .filter(field => field.dataset.ship === ship)
@@ -169,6 +195,8 @@ function deleteShip(ship, pill) {
         });
 
     Sea = Sea.map(field => (field === ship ? 0 : field));
+    
+
 }
 
 /**
@@ -204,8 +232,9 @@ function placeShip(field, ship, doneCb) {
         .concat([index])
         .sort((a, b) => a - b);
 
-    if (Sea[index] !== 0) return false;
-    else if (shipOccurrences.length > Ships[ship]) return false;
+    if (Sea[index] !== 0) {
+        return false;
+    } else if (shipOccurrences.length > Ships[ship]) return false;
     else if (!validShipPlacement(ship, shipOccurrences, false)) return false;
     else {
         Sea[index] = ship;
@@ -217,6 +246,29 @@ function placeShip(field, ship, doneCb) {
             validGameField(Sea).valid && doneCb(Sea);
         }
     }
+}
+
+/**
+ * Places or completes placing recon plans randomly on the carrier
+ * @param {array} sea Sea field
+ * @param {string} ship Aircraft from X-Y
+ * @param {array} [occurrences=[]] List of already placed carrier
+ */
+function placePlanesRandomly(sea, plane, occurrences = []) {
+    var str = "W";
+    var aircraftNumber = plane.charCodeAt(0) - str.charCodeAt(0);
+    do {
+        var point = occurrences[Math.floor(Math.random() * occurrences.length)];
+        if (sea[point] != "X" && sea[point] != "Y") {
+            sea[point] = plane;
+            fields[point].classList.add(
+                "plane",
+                `plane-${aircraftNumber}`
+            );
+            fields[point].dataset.plane = plane;
+            break;
+        }
+    } while (true);
 }
 
 /**
@@ -248,7 +300,7 @@ function placeShipRandomly(sea, ship, occurrences = []) {
     // Place ship randomly
     if (occurrences.length === 0) {
         do {
-            let point = randomInRange(0, 99);
+            let point = randomInRange(0, 139);
 
             if (
                 sea[point] == 0 &&
@@ -258,7 +310,6 @@ function placeShipRandomly(sea, ship, occurrences = []) {
             ) {
                 occurrences.push(point);
                 // Place it
-                sea[point] = ship;
                 sea[point] = ship;
                 fields[point].classList.add(
                     "ship",
@@ -276,12 +327,12 @@ function placeShipRandomly(sea, ship, occurrences = []) {
         size - occurrences.length
     );
     dir = Object.keys(dir).filter(key => dir[key]);
-    dir = dir[randomInRange(0, dir.length - 1)] === "row" ? 1 : 10;
+    dir = dir[randomInRange(0, dir.length - 1)] === "row" ? 1 : 14;
 
     do {
         let pos = occurrences[0] - dir;
         let overflowsLeft =
-            Math.floor(occurrences[0] / 10) !== Math.floor(pos / 10);
+            Math.floor(occurrences[0] / 14) !== Math.floor(pos / 14);
 
         if (sea[pos] != 0 || pos < 0 || (dir == 1 && overflowsLeft))
             pos = occurrences[occurrences.length - 1] + dir;
@@ -295,6 +346,13 @@ function placeShipRandomly(sea, ship, occurrences = []) {
 
         occurrences[pos < occurrences[0] ? "unshift" : "push"](pos);
     } while (occurrences.length < size);
+    
+    // If in advanced mode, place recon plans
+    if (ship == "A") {
+        Object.keys(Aircraft).forEach(plane => {
+            placePlanesRandomly(sea, plane, findOccurrences(ship, sea));
+        });
+    }
 }
 
 /*====*\
@@ -357,6 +415,7 @@ function placeRandomly() {
             deleteShip(ship, pill);
         // Place randomly
         placeShipRandomly(Sea, ship, findOccurrences(ship, Sea));
+        
         // Select pill
         pill.click();
         deselectPill(pill);

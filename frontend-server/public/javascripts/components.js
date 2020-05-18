@@ -108,7 +108,7 @@ const sea = ({ id = false, classes = false }) =>
     html`
         <div class="sea ${classes ? classes : ""}" ${id ? `id="${id}"` : ""}>
             ${// Top row number labels + empty label in top left
-            new Array(11)
+            new Array(15)
                 .fill()
                 .map(
                     (_, colInd) =>
@@ -125,7 +125,7 @@ const sea = ({ id = false, classes = false }) =>
                             `<span class="sea__label">${
                                 fieldLetters[rowInd]
                             }</span>` +
-                            new Array(10)
+                            new Array(14)
                                 .fill()
                                 .map(
                                     (col, colInd) =>

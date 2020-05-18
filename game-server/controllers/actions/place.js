@@ -6,7 +6,6 @@ let { messageSchemas } = require(`${root}/models/schemas`);
 let { validGameField } = require(`${root}/helpers/game`);
 
 module.exports = function(msg, ws, wss, room) {
-    console.log(msg);
     let valid = validGameField(msg.split(""));
 
     if (!valid.valid) {

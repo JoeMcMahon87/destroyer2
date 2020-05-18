@@ -14,8 +14,6 @@ function initSea(sea) {
         [[], []]
     );
 
-    console.log(labels);
-
     fields.forEach(field => {
         field.addEventListener("mouseenter", () => {
             let coords = field.dataset.field;

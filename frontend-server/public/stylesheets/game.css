@@ -1,7 +1,7 @@
 /* General */
 .sea,
 .ship-list {
-    --ship-1-color: #f26419;
+    --ship-1-color: #ef854d;
     --ship-2-color: #f6ae2d;
     --ship-3-color: #86bbd8;
     --ship-4-color: #33658a;
@@ -13,7 +13,7 @@
     --size: 34px;
 
     display: inline-grid;
-    grid-template-columns: repeat(11, var(--size));
+    grid-template-columns: repeat(15, var(--size));
     grid-template-rows: repeat(11, var(--size));
     grid-gap: 1px;
     max-width: 100vw;
@@ -57,6 +57,18 @@
     background-color: var(--ship-1-color);
 }
 
+.sea .sea__field.plane-1,
+.ship-list .plane-1::before {
+    background-image: url(../images/recon1.png);
+    background-size: 34px 34px;
+}
+
+.sea .sea__field.plane-2,
+.ship-list .plane-2::before {
+    background-image: url(../images/recon2.png);
+    background-size: 34px 34px;
+}
+
 .sea .sea__field.ship-2,
 .ship-list .ship-2::before {
     background-color: var(--ship-2-color);
@@ -78,6 +90,15 @@
 .sea .sea__field.ship-5,
 .ship-list .ship-5::before {
     background-color: var(--ship-5-color);
+}
+
+.sea .sea__field.ship-6,
+.ship-list .ship-6::before {
+    background-color: var(--ship-6-color);
+}
+.sea .sea__field.ship-7,
+.ship-list .ship-7::before {
+    background-color: var(--ship-7-color);
 }
 
 .sea .sea__field.hit,
@@ -208,7 +229,7 @@
 /* Media Queries */
 @media only screen and (max-width: 750px) {
     .sea {
-        grid-template-columns: repeat(10, var(--size));
+        grid-template-columns: repeat(14, var(--size));
         grid-template-rows: repeat(10, var(--size));
     }
 

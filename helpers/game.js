@@ -3,31 +3,33 @@ const shipSizes = {
     B: 4,
     C: 3,
     D: 3,
-    E: 2
+    E: 2,
+    F: 1,
+    G: 1
 };
 
-const ships = ["A", "B", "C", "D", "E"];
+const ships = ["A", "B", "C", "D", "E", "F", "G"];
 const fieldLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
 function validShipPlacement(type, placements) {
     return (
         placements.length === shipSizes[type] &&
         // Check for vertically placed ships
-        (placements.slice(1).every((el, i) => el - 10 === placements[i]) ||
+        (placements.slice(1).every((el, i) => el - 14 === placements[i]) ||
             // OR horizontally placed ships
             placements.slice(1).every(
                 (el, i) =>
                     // Check if ships are in the same row
-                    Math.floor(el / 10) === Math.floor(placements[i] / 10) &&
+                    Math.floor(el / 14) === Math.floor(placements[i] / 14) &&
                     el === placements[i] + 1
             ))
     );
 }
 
 module.exports.validGameField = function(field) {
-    if (field.length !== 100)
+    if (field.length !== 140)
         return { valid: false, msg: "Field must be 10x10" };
-    else if (!/[A-E0-2]/g.test(field.join("")))
+    else if (!/[A-EXY0-2]/g.test(field.join("")))
         return { valid: false, msg: "Field contains illegal characters" };
     else {
         let shipMap = [...ships.slice().map(el => [el, []])].reduce(
@@ -36,7 +38,7 @@ module.exports.validGameField = function(field) {
         );
         // Save ship positions / indizes
         field.forEach((ship, index) => {
-            if (/[A-E]/g.test(ship)) {
+            if (/[A-EXY]/g.test(ship)) {
                 shipMap[ship].push(index);
             }
         });
@@ -69,9 +71,9 @@ module.exports.countShips = function(field) {
 };
 
 module.exports.toIndex = function(coords) {
-    return fieldLetters.indexOf(coords[0]) * 10 + Number(coords.slice(1)) - 1;
+    return fieldLetters.indexOf(coords[0]) * 14 + Number(coords.slice(1)) - 1;
 };
 
 module.exports.toCoords = function(index) {
-    return fieldLetters[Math.floor(index / 10)] + ((index % 10) + 1);
+    return fieldLetters[Math.floor(index / 14)] + ((index % 14) + 1);
 };

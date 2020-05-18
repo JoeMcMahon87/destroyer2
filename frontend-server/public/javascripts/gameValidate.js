@@ -5,28 +5,28 @@ const shipSizes = {
     D: 3,
     E: 2
 };
-
-const ships = ["A", "B", "C", "D", "E"];
+const aircraft = [ "X", "Y" ];
+const ships = ["A", "B", "C", "D", "E", "F", "G"];
 
 function validShipPlacement(type, placements, length = true) {
     return (
         (length ? placements.length === shipSizes[type] : true) &&
         // Check for vertically placed ships
-        (placements.slice(1).every((el, i) => el - 10 === placements[i]) ||
+        (placements.slice(1).every((el, i) => el - 14 === placements[i]) ||
             // OR horizontally placed ships
             placements.slice(1).every(
                 (el, i) =>
                     // Check if ships are in the same row
-                    Math.floor(el / 10) === Math.floor(placements[i] / 10) &&
+                    Math.floor(el / 14) === Math.floor(placements[i] / 14) &&
                     el === placements[i] + 1
             ))
     );
 }
 
 function validGameField(field) {
-    if (field.length !== 100)
-        return { valid: false, msg: "Field must be 10x10" };
-    else if (!/[A-E0-2]/g.test(field.join("")))
+    if (field.length !== 140)
+        return { valid: false, msg: "Field must be 14x10" };
+    else if (!/[A-EXY0-2]/g.test(field.join("")))
         return { valid: false, msg: "Field contains illegal characters" };
     else {
         let shipMap = [...ships.slice().map(el => [el, []])].reduce(
@@ -36,7 +36,7 @@ function validGameField(field) {
 
         // Save ship positions / indizes
         field.forEach((ship, index) => {
-            if (/[A-E]/g.test(ship)) {
+            if (/[A-EXY]/g.test(ship)) {
                 shipMap[ship].push(index);
             }
         });

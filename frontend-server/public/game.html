@@ -45,6 +45,20 @@
                         </button>
                     </li>
                 </ul>
+                <p class="framed">and</p>
+                    <ul id="planelist" class="plane-list list--none list--inline">
+                        <li>
+                            <button class="pill recon-1" data-plane="X">
+                                Recon 1
+                            </button>
+                        </li>
+                        <li>
+                            <button class="pill recon-2" data-ship="Y">
+                                Recon 2
+                            </button>
+                        </li>
+                    </ul>
+                </p>
                 <p class="sea-phone-full sea-container">
                     <!-- Shippicker interface -->
                     <button
@@ -289,7 +303,7 @@
             \* ****************** */
             function setupGameLogic(myShips, enemyShips = false) {
                 seas.my = myShips;
-                seas.enemy = enemyShips || new Array(100).fill(0);
+                seas.enemy = enemyShips || new Array(140).fill(0);
 
                 initGameFields("#ownSea", "#enemySea", seas.my, seas.enemy);
 
