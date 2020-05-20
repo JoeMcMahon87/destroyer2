@@ -48,12 +48,12 @@
                 <p class="framed">and</p>
                     <ul id="planelist" class="plane-list list--none list--inline">
                         <li>
-                            <button class="pill recon-1" data-plane="X">
+                            <button class="rpill recon-1 recon-icon" data-plane="X">
                                 Recon 1
                             </button>
                         </li>
                         <li>
-                            <button class="pill recon-2" data-ship="Y">
+                            <button class="rpill recon-2 recon-icon" data-ship="Y">
                                 Recon 2
                             </button>
                         </li>
@@ -92,7 +92,9 @@
 
             import { initSea } from "./javascripts/sea.js";
             import {
+                initPlanepicker,
                 initShippicker,
+                initPlanelist,
                 initShiplist,
                 getShipPlacement,
                 placeRandomly
@@ -168,7 +170,10 @@
                 setupBtn.disabled = true;
                 setupBtn.classList.remove("success");
             });
-
+            initPlanelist("#planelist", () => {
+                setupBtn.disabled = true;
+                setupBtn.classList.remove("success");
+            });
             placeRandomlyBtn.addEventListener("click", () => {
                 placeRandomly();
                 // Add reload icon
@@ -277,6 +282,8 @@
                         })
                     );
                     setupGameLogic(shipPlacement);
+                } else {
+                    console.log(shipPlacement);
                 }
             });
 

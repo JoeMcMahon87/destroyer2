@@ -15,8 +15,8 @@ const Aircraft = {
 const FieldLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 let Sea = new Array(140).fill(0);
 
-let currentShip, currentPill;
-let pills, fields;
+let currentShip, currentPlane, currentPill;
+let pills, rpills, fields;
 
 /*=======*\
   Helpers
@@ -158,6 +158,31 @@ function deselectPill(pill) {
 }
 
 /**
+ * Deletes a plane by removing it from the sea and changing the ui
+ * @param {string} plane Plane letter from X-Y
+ * @param {element} rpill HTML Element for pill to select
+ */
+function deletePlane(plane, rpill) {
+    let icon = rpill.querySelector(".icon");
+    icon.parentElement.removeChild(icon);
+
+    currentPlane = undefined;
+    currentPill = undefined;
+    
+    // Field
+    fields
+        .filter(field => field.dataset.plane === plane)
+        .forEach(field => {
+            field.removeAttribute("data-plane");
+            field.className = "sea__field";
+        });
+
+    Sea = Sea.map(field => (field === plane ? 0 : field));
+    
+
+}
+
+/**
  * Deletes a ship by removing it from the sea and changing the ui
  * @param {string} ship Ship letter from A-E
  * @param {element} pill HTML Element for pill to select
@@ -200,6 +225,14 @@ function deleteShip(ship, pill) {
 }
 
 /**
+ * Selects a plane by setting up select logic and changing ui
+ * @param {string} plane Plane letter from X-Y
+ * @param {element} pill HTML Element for pill to select
+ */
+function selectPlane(plane, pill, deselectCb) {
+}
+
+/**
  * Selects a ship by setting up select logic and changing ui
  * @param {string} ship Ship letter from A-E
  * @param {element} pill HTML Element for pill to select
@@ -219,6 +252,14 @@ function selectShip(ship, pill, deselectCb) {
         deselectPill(pill);
         deselectCb(Sea);
     });
+}
+
+/**
+ * Places a plane on the sea and updates the ui
+ * @param {element} field HTML Element for sea field
+ * @param {string} plane Plane letter from X-Y
+ */
+function placePlane(field, plane, doneCb) {
 }
 
 /**
@@ -262,8 +303,8 @@ function placePlanesRandomly(sea, plane, occurrences = []) {
         if (sea[point] != "X" && sea[point] != "Y") {
             sea[point] = plane;
             fields[point].classList.add(
-                "plane",
-                `plane-${aircraftNumber}`
+                "recon",
+                `recon-${aircraftNumber}`
             );
             fields[point].dataset.plane = plane;
             break;
@@ -381,6 +422,30 @@ function initShiplist(list, deselectCb = () => "") {
         })
     );
 }
+/**
+ * Initializes the planelist
+ * @param {(element|string)} list HTML Element referencing the planelist
+ * @param {function} [deselectCb] Calllback function to be called when user
+ * deselects plane, e.g. because field was valid and done btn enabled but
+ * then user decides to change plane placement
+ */
+function initPlanelist(list, deselectCb = () => "") {
+    if (!(list instanceof Element)) list = document.querySelector(list);
+
+    rpills = [...list.querySelectorAll(".rpill")];
+
+    rpills.forEach(rpill =>
+        rpill.addEventListener("click", () => {
+            if (currentPlane) {
+                currentPlane = undefined;
+                currentPill.classList.remove("active");
+                currentPill = undefined;
+            }
+            selectShip(rpill.dataset.plane, rpill, deselectCb);
+        })
+    );
+}
+
 
 /**
  * Initializes the shippicker interface
@@ -396,6 +461,24 @@ function initShippicker(picker, doneCb = () => "") {
     fields.forEach(field =>
         field.addEventListener("click", () =>
             currentShip ? placeShip(field, currentShip, doneCb) : false
+        )
+    );
+}
+
+/**
+ * Initializes the planepicker interface
+ * @param {(element|string)} picker HTML Element referencing the planepicker sea
+ * @param {function} [doneCb] callback function called when sea is valid and
+ * done btn can be enabled
+ */
+function initPlanepicker(picker, doneCb = () => "") {
+    if (!(picker instanceof Element)) picker = document.querySelector(picker);
+
+    fields = [...picker.querySelectorAll(".sea__field")];
+
+    fields.forEach(field =>
+        field.addEventListener("click", () =>
+            currentPlane ? placePlane(field, currentPlane, doneCb) : false
         )
     );
 }
@@ -429,4 +512,4 @@ function getShipPlacement() {
     return validGameField(Sea).valid && Sea;
 }
 
-export { initShippicker, initShiplist, placeRandomly, getShipPlacement };
+export { initShippicker, initPlanepicker, initShiplist, initPlanelist, placeRandomly, getShipPlacement };

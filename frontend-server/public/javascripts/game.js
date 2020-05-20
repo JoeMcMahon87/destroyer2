@@ -39,7 +39,7 @@ function fillField(field, placements, fillHit = true) {
         )
         .forEach(ship => {
             let classes = [];
-
+            
             switch (ship.ship) {
                 case 1:
                 case "1":

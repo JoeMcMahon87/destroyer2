@@ -21,6 +21,9 @@
     overflow-y: hidden;
 }
 
+.recon-icon {
+    background-size: 20px 20px;
+}
 .sea-container {
     display: inline-block;
 }
@@ -57,14 +60,14 @@
     background-color: var(--ship-1-color);
 }
 
-.sea .sea__field.plane-1,
-.ship-list .plane-1::before {
+.sea .sea__field.recon-1,
+.plane-list .recon-1::before {
     background-image: url(../images/recon1.png);
     background-size: 34px 34px;
 }
 
-.sea .sea__field.plane-2,
-.ship-list .plane-2::before {
+.sea .sea__field.recon-2,
+.plane-list .recon-2::before {
     background-image: url(../images/recon2.png);
     background-size: 34px 34px;
 }
@@ -163,6 +166,19 @@
 }
 
 .ship-list button::before {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5em;
+    vertical-align: middle;
+    box-shadow: 0 0 0 3px white;
+}
+.plane-list li {
+    margin: 0.25em;
+}
+
+.plane-list button::before {
     content: "";
     display: inline-block;
     width: 1em;

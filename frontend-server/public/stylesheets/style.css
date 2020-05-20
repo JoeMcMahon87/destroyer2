@@ -258,6 +258,31 @@ button.disabled {
 .pill .feather-close:hover {
     stroke-width: 3;
 }
+.rpill {
+    border: 2px solid #ddd;
+    border-radius: 1em;
+    padding: 0.5em 1em;
+}
+
+.rpill:focus,
+.rpill:hover,
+.rpill.active {
+    border-color: var(--main-color);
+}
+
+.rpill:focus,
+.rpill.active {
+    background-color: var(--main-color);
+    color: white;
+}
+
+.rpill .feather-close {
+    margin: 0 0 0 1em;
+}
+
+.rpill .feather-close:hover {
+    stroke-width: 3;
+}
 
 /* Lists */
 .list--none {

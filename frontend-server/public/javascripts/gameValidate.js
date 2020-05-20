@@ -6,7 +6,7 @@ const shipSizes = {
     E: 2
 };
 const aircraft = [ "X", "Y" ];
-const ships = ["A", "B", "C", "D", "E", "F", "G"];
+const ships = ["A", "B", "C", "D", "E"];
 
 function validShipPlacement(type, placements, length = true) {
     return (
@@ -25,10 +25,13 @@ function validShipPlacement(type, placements, length = true) {
 
 function validGameField(field) {
     if (field.length !== 140)
+    {
+        console.log("Field size wrong: " + field.length);
         return { valid: false, msg: "Field must be 14x10" };
-    else if (!/[A-EXY0-2]/g.test(field.join("")))
+    } else if (!/[A-E0-2]/g.test(field.join(""))) {
+        console.log("Illegal characters in field" + field);
         return { valid: false, msg: "Field contains illegal characters" };
-    else {
+    } else {
         let shipMap = [...ships.slice().map(el => [el, []])].reduce(
             (obj, { 0: key, 1: val }) => Object.assign(obj, { [key]: val }),
             {}
@@ -37,6 +40,9 @@ function validGameField(field) {
         // Save ship positions / indizes
         field.forEach((ship, index) => {
             if (/[A-EXY]/g.test(ship)) {
+                if (ship == "X" || ship == "Y") {
+                    ship = "A"
+                }
                 shipMap[ship].push(index);
             }
         });
@@ -46,9 +52,14 @@ function validGameField(field) {
             .sort()
             .map(entry => validShipPlacement(...entry));
 
-        if (!allShips)
+        if (!allShips) {
+            console.log("Number of ships wrong: " + allShips);
             return { valid: false, msg: "Amount of ships must be 5" };
-        else if (!shipsValidity.every(el => el))
+        } else if (!shipsValidity.every(el => el)) {
+            console.log(`${ships
+                .map((letter, i) => (shipsValidity[i] ? false : letter))
+                .filter(el => el)
+                .join(", ")} is / are invalid`);
             return {
                 valid: false,
                 msg: `Ship(s) ${ships
@@ -56,7 +67,7 @@ function validGameField(field) {
                     .filter(el => el)
                     .join(", ")} is / are invalid`
             };
-        else return { valid: true };
+        } else return { valid: true };
     }
 }
 
